@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>یوک</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--green:#0f5b3d;--green2:#184d39;--gold:#d9a441;--gold2:#f3d58b;--ink:#231b12;--cream:#fff7e7;--red:#b8453d}
+html,body{margin:0;height:100%;font-family:Tahoma,Arial,sans-serif;color:var(--ink);background:#20170d}
+body{overflow:hidden}
+.app{height:100%;position:relative;background:
+linear-gradient(180deg,rgba(21,24,18,.70),rgba(45,32,16,.84)),
+url('background.png') center/cover no-repeat}
+.app:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 12%,rgba(243,213,139,.18),transparent 38%);pointer-events:none}
+.screen{display:none;height:100%;padding:14px 14px 20px;overflow:auto;position:relative;z-index:1}
+.screen.active{display:flex;flex-direction:column}
+.top{display:grid;grid-template-columns:46px 1fr 46px;align-items:center;gap:9px;position:sticky;top:0;z-index:5}
+.back{width:46px;height:46px;border:1px solid rgba(243,213,139,.45);border-radius:15px;background:rgba(18,58,43,.93);font-size:26px;color:#fff;box-shadow:0 6px 16px #0005}
+.pill{text-align:center;padding:11px 14px;border-radius:16px;background:rgba(255,247,231,.94);font-weight:900;color:#214334;border:1px solid #e7c271;box-shadow:0 6px 16px #0003}
+.card{background:rgba(255,247,231,.96);border:1px solid rgba(231,194,113,.9);border-radius:24px;padding:17px;box-shadow:0 12px 34px rgba(0,0,0,.24);margin:10px 0}
+.brand{text-align:center;margin:1.2vh 0 4px}
+.appLogo{display:block;width:min(82vw,390px);max-height:36vh;object-fit:cover;object-position:center;border-radius:24px;margin:0 auto 10px;border:2px solid #e8c36f;box-shadow:0 15px 38px #0009}
+.subtitle{color:#fff6de;font-size:17px;font-weight:900;text-shadow:0 2px 8px #000}
+.hero{margin:auto 0}.homeCta{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important}.homeCta .btn{width:min(86%,420px);display:block;margin:0 auto 14px}
+h2{margin:3px 0 10px;font-size:24px;color:#204b38}
+p{line-height:1.8;margin:6px 0;color:#66533a}
+label{display:block;font-size:13px;color:#705b3e;margin:11px 2px 6px;font-weight:800}
+input{width:100%;border:1px solid #ddc28d;background:#fffdf7;border-radius:14px;padding:13px;font:15px Tahoma;outline:none}
+select{width:100%;border:1px solid #ddc28d;background:#fffdf7;border-radius:14px;padding:13px;font:900 15px Tahoma;color:#36513f;outline:none;margin:2px 0 10px}
+.btn{border:0;border-radius:18px;padding:15px 18px;font:900 16px Tahoma;background:linear-gradient(180deg,#1b6d4c,#0e4f37);color:white;box-shadow:0 8px 18px rgba(0,0,0,.23);width:100%;margin-top:11px}
+.btn:active{transform:scale(.985)}
+.btn.secondary{background:#fff9ec;color:#26513e;border:1px solid #d9b86d;box-shadow:none}
+.btn.good{background:linear-gradient(180deg,#2d9d67,#167548)}
+.btn.bad{background:linear-gradient(180deg,#c35a50,#a63e37)}
+.btn.gold{background:linear-gradient(180deg,#e0ad48,#b87b23);color:#251b0e}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:10px 13px;border-radius:13px;border:1px solid #d7b66e;background:#fffaf0;font:800 13px Tahoma;color:#604c31}
+.chip.sel{background:#155a40;color:#fff;border-color:#155a40}
+.hint{font-size:11px;color:#806b4d;margin-top:7px;line-height:1.7}
+.teamCount{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.teamCount .chip{padding:10px 5px}
+.teamInputs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.teamInputs .teamField label{margin-top:7px}
+.topics{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:8px}
+.topic{border:1px solid #dbc179;background:rgba(255,250,240,.96);border-radius:17px;padding:12px 7px;font:900 14px Tahoma;color:#3a4c3d;min-height:64px}
+.topic small{display:block;font-size:11px;font-weight:500;margin-top:4px;opacity:.72}
+.topic.sel{background:#155a40;color:white;border-color:#155a40}
+.readyCard,.result{text-align:center;margin:auto 0}
+.bigTeam{font-size:32px;font-weight:900;color:#18563f;margin:10px 0}
+.roundBadge{display:inline-block;padding:8px 13px;border-radius:999px;background:#f3dfad;color:#614618;font-weight:900}
+.scoreStrip{display:flex;gap:8px;overflow-x:auto;padding:5px 1px 8px;scrollbar-width:none}
+.scoreStrip::-webkit-scrollbar{display:none}
+.teamScore{min-width:104px;background:rgba(255,250,239,.95);border:1px solid #d8b76c;border-radius:15px;padding:8px;text-align:center;font-size:11px;font-weight:800;color:#665238}
+.teamScore.active{background:#164f39;color:#fff;border-color:#e4b951;box-shadow:0 0 0 2px #e4b95155}
+.teamScore b{display:block;font-size:20px;margin-top:3px}
+.gameHeader{display:grid;grid-template-columns:48px 1fr 92px;gap:8px;align-items:center}
+.gameInfo{background:rgba(255,247,231,.95);border:1px solid #dfbe74;border-radius:16px;padding:8px 10px;text-align:center}
+.gameInfo .who{font-size:13px;font-weight:900;color:#28513e}
+.gameInfo .gain{font-size:11px;color:#806649;margin-top:3px}
+.timerWrap{display:grid;place-items:center}
+.timer{--p:100;width:82px;height:82px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#e1ad45 calc(var(--p)*1%),#f2e3bf 0);box-shadow:0 8px 20px #0005;position:relative}
+.timer:before{content:"";position:absolute;inset:7px;border-radius:50%;background:#fff8e8}
+.timer span{position:relative;z-index:1;font-size:24px;font-weight:900;color:#254d3b}
+.wordCard{flex:1;min-height:260px;display:flex;align-items:center;justify-content:center;text-align:center;background:rgba(255,248,232,.97);border:1px solid #dfbd70;border-radius:28px;margin:10px 0 12px;padding:16px;box-shadow:0 15px 40px rgba(0,0,0,.25)}
+.wordPair{width:100%;display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:8px}
+.singleWordBox{width:100%;min-height:190px;display:flex;align-items:center;justify-content:center;border-radius:22px;padding:24px;background:#fff8e8;border:1px solid #dec079}
+.wordBox{border-radius:20px;padding:17px 9px;background:#f3e7c8;border:1px solid #dec079;display:flex;flex-direction:column;justify-content:center;min-width:0}
+.wordBox.std{background:#e8f1e9;border-color:#b5d0bc}
+.wordLabel{font-size:11px;color:#766043;margin-bottom:8px;font-weight:900}
+.word{font-size:26px;font-weight:900;line-height:1.5;color:#272016;overflow-wrap:anywhere}
+.eq{display:grid;place-items:center;color:#9b7634;font-size:22px;font-weight:900}
+.category{font-size:12px;color:#806748;margin-top:12px;font-weight:800}
+.gameBtns{display:flex;gap:10px}
+.gameBtns .btn{margin:0;font-size:18px;padding:17px 8px}
+.turnEndIcon{font-size:60px;margin:4px}
+.standings{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+.rankRow{display:grid;grid-template-columns:36px 1fr 60px;align-items:center;gap:8px;background:#fffaf0;border:1px solid #e0c37f;border-radius:14px;padding:9px}
+.rankRow .r{font-weight:900;color:#b27b24}.rankRow .n{font-weight:900;text-align:right}.rankRow .s{font-size:20px;font-weight:900;color:#195940}
+.small{font-size:11px;color:#f7e8c4;text-align:center;margin-top:8px;text-shadow:0 1px 4px #000}
+.modalShade{display:none;position:fixed;z-index:40;inset:0;background:#000a;padding:18px;align-items:center;justify-content:center}
+.modalShade.show{display:flex}.modal{width:min(92vw,420px);background:#fff7e7;border:2px solid #d9aa4e;border-radius:24px;padding:20px;text-align:center}
+@media(max-height:670px){.appLogo{max-height:22vh;width:min(62vw,320px)}.card{padding:13px}.wordCard{min-height:190px}.word{font-size:22px}.timer{width:72px;height:72px}.brand{margin-top:0}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<section id="home" class="screen active">
+  <div class="brand">
+    <img class="appLogo" src="app_logo.png" alt="یوک">
+    <div class="subtitle">هم‌نشینی سربداران • بازی گروهی</div>
+  </div>
+  <div class="hero homeCta">
+    <button class="btn gold" onclick="go('setup')">شروع مسابقه</button>
+  </div>
+  <div class="small">نسخه ۲ • آفلاین • بانک موضوعی گسترده</div>
+</section>
+
+<section id="setup" class="screen">
+  <div class="top"><button class="back" onclick="go('home')">‹</button><div class="pill">تنظیم مسابقه</div><div></div></div>
+  <div class="card">
+<label>تعداد تیم‌ها <span style="font-size:11px;color:#99752c">(۲ تا ۱۰ تیم)</span></label>
+    <select id="teamCountSelect" aria-label="تعداد تیم‌ها">
+      <option value="2">۲ تیم</option><option value="3">۳ تیم</option><option value="4" selected>۴ تیم</option><option value="5">۵ تیم</option><option value="6">۶ تیم</option>
+      <option value="7">۷ تیم</option><option value="8">۸ تیم</option><option value="9">۹ تیم</option><option value="10">۱۰ تیم</option>
+    </select>
+    <div class="teamCount" id="teamCounts">
+      <button type="button" class="chip" data-v="2">۲</button><button type="button" class="chip" data-v="3">۳</button><button type="button" class="chip sel" data-v="4">۴</button><button type="button" class="chip" data-v="5">۵</button><button type="button" class="chip" data-v="6">۶</button>
+      <button type="button" class="chip" data-v="7">۷</button><button type="button" class="chip" data-v="8">۸</button><button type="button" class="chip" data-v="9">۹</button><button type="button" class="chip" data-v="10">۱۰</button>
+    </div>
+    <div class="hint">می‌توانی از ۲ تا ۱۰ تیم بسازی؛ برای هر تیم نام جداگانه وارد می‌شود.</div>
+    <div id="teamInputs" class="teamInputs"></div>
+
+    <label>زمان هر نوبت</label>
+    <div class="chips" id="times">
+      <button class="chip" data-v="30">۳۰ ثانیه</button>
+      <button class="chip" data-v="45">۴۵ ثانیه</button>
+      <button class="chip sel" data-v="60">۶۰ ثانیه</button>
+      <button class="chip" data-v="90">۹۰ ثانیه</button>
+    </div>
+
+    <label>تعداد دور برای هر تیم</label>
+    <div class="chips" id="rounds">
+      <button class="chip" data-v="1">۱ دور</button>
+      <button class="chip sel" data-v="3">۳ دور</button>
+      <button class="chip" data-v="5">۵ دور</button>
+      <button class="chip" data-v="7">۷ دور</button>
+    </div>
+    <button class="btn" onclick="openTopics()">انتخاب موضوع‌ها</button>
+  </div>
+</section>
+
+<section id="topics" class="screen">
+  <div class="top"><button class="back" onclick="go('setup')">‹</button><div class="pill">موضوع‌ها</div><div></div></div>
+  <div class="card">
+    <div style="font-weight:900;margin-bottom:8px;color:#36513f">یک یا چند موضوع انتخاب کن</div>
+    <div id="topicGrid" class="topics"></div>
+    <button class="btn gold" onclick="startMatch()">شروع مسابقه</button>
+  </div>
+</section>
+
+<section id="ready" class="screen">
+  <div class="top"><button class="back" onclick="askExit()">‹</button><div class="pill">آماده‌ی نوبت</div><div></div></div>
+  <div class="card readyCard">
+    <div class="roundBadge" id="readyRound"></div>
+    <img src="app_logo.png" style="width:150px;height:115px;object-fit:cover;border-radius:20px;border:1px solid #d5aa50;margin-top:12px">
+    <div style="font-size:13px;color:#7a6243;margin-top:12px">نوبت</div>
+    <div class="bigTeam" id="readyTeam"></div>
+    <p>گوشی را به بازیکن این تیم بده. تایمر فقط با زدن دکمه زیر شروع می‌شود.</p>
+    <button class="btn gold" onclick="startTurn()">برای شروع روی دکمه بزنید</button>
+  </div>
+  <div id="readyScores" class="scoreStrip"></div>
+</section>
+
+<section id="game" class="screen">
+  <div class="gameHeader">
+    <button class="back" onclick="askExit()">‹</button>
+    <div class="gameInfo"><div class="who" id="turn"></div><div class="gain" id="turnGain"></div></div>
+    <div class="timerWrap"><div class="timer" id="timerRing"><span id="timer">60</span></div></div>
+  </div>
+  <div id="gameScores" class="scoreStrip"></div>
+  <div class="wordCard">
+    <div style="width:100%">
+      <div class="wordPair" id="sabPair" style="display:none">
+        <div class="wordBox">
+          <div class="word" id="dialectWord">...</div>
+        </div>
+        <div class="eq">⇄</div>
+        <div class="wordBox std">
+          <div class="wordLabel">معنی</div>
+          <div class="word" id="stdWord">...</div>
+        </div>
+      </div>
+      <div class="singleWordBox" id="singleWordBox"><div class="word" id="singleWord">...</div></div>
+      <div class="category" id="cat"></div>
+    </div>
+  </div>
+  <div class="gameBtns">
+    <button class="btn bad" onclick="skipWord()">رد ✕</button>
+    <button class="btn good" onclick="correctWord()">درست ✓</button>
+  </div>
+  <button class="btn secondary" onclick="manualEnd()">پایان دستی نوبت</button>
+</section>
+
+<section id="turnEnd" class="screen">
+  <div class="card readyCard">
+    <div class="turnEndIcon">⏱️</div>
+    <h2>نوبت تمام شد</h2>
+    <div class="bigTeam" id="endedTeam"></div>
+    <div id="endedGain" style="font-size:19px;font-weight:900;color:#8b6626"></div>
+    <div id="endedTotal" style="margin-top:7px;color:#65523a"></div>
+    <button class="btn gold" id="nextTurnBtn" onclick="nextAfterSummary()">آماده‌سازی تیم بعدی</button>
+  </div>
+  <div id="endScores" class="scoreStrip"></div>
+</section>
+
+<section id="result" class="screen">
+  <div class="card result">
+    <div style="font-size:70px">🏆</div>
+    <div class="bigTeam" id="winner"></div>
+    <div style="font-weight:800;color:#6d5738">رتبه‌بندی نهایی</div>
+    <div id="finalStandings" class="standings"></div>
+    <button class="btn gold" onclick="restart()">مسابقه جدید</button>
+    <button class="btn secondary" onclick="go('home')">خانه</button>
+  </div>
+</section>
+</div>
+
+<div id="exitModal" class="modalShade">
+  <div class="modal">
+    <h2>خروج از مسابقه؟</h2>
+    <p>امتیازهای مسابقه فعلی پاک می‌شوند.</p>
+    <button class="btn bad" onclick="confirmExit()">خروج</button>
+    <button class="btn secondary" onclick="hideExit()">ادامه بازی</button>
+  </div>
+</div>
+
+<script>
+const ANIMALS_500=["فیل","شیر","ببر","پلنگ","خرس","گربه","سگ","گرگ","روباه","شغال","کفتار","خرس قهوه‌ای","خرس قطبی","پاندا","راکون","راسو","سمور","گورکن","خدنگ","کفتار راه‌راه","اسب","الاغ","گورخر","کرگدن","فیل آفریقایی","فیل آسیایی","زرافه","شتر","لاما","آلپاکا","گاو","گاومیش","بز","گوسفند","گوزن","آهو","غزال","قوچ","میش","بز کوهی","گوزن شمالی","گوزن زرد","گوزن قرمز","گراز","خوک","اسب آبی","خوک آبی","کانگورو","والابی","کوآلا","وامبت","شیطان تاسمانی","اپوسوم","پلاتیپوس","اکیدنا","میمون","شامپانزه","گوریل","اورانگوتان","بابون","لمور","گیبون","ماکاک","کاپوچین","تنبل","مورچه‌خوار","آرمادیلو","پانگولین","خرگوش","خرگوش صحرایی","موش","موش صحرایی","همستر","سنجاب","تشی","بیدستر","سمور آبی","خارپشت","خفاش","دلفین","نهنگ آبی","نهنگ عنبر","نهنگ قاتل","نهنگ گوژپشت","خوک دریایی","فک","شیر دریایی","وال","گاو دریایی","دوگونگ","میرکت","بابروسا","تاپیر","اوکاپی","بوفالو","بز کوهی آلپ","مارموست","ماندریل","لوریس","سنجاب پرنده","عقاب","شاهین","باز","قوش","کرکس","جغد","بوف","کلاغ","زاغ","کبوتر","قمری","گنجشک","بلبل","قناری","طوطی","کاسکو","مرغ عشق","ماکائو","طاووس","قرقاول","کبک","تیهو","بلدرچین","مرغ","خروس","بوقلمون","اردک","غاز","قو","فلامینگو","لک‌لک","حواصیل","پلیکان","باکلان","مرغ ماهی‌خوار","مرغ دریایی","پنگوئن","شترمرغ","امو","کاسواری","کیوی","توکان","دارکوب","هدهد","زنبورخوار","سهره","سار","مینا","هزاردستان","چکاوک","پرستو","بادخورک","مرغ مگس‌خوار","ماهی‌خورک","سبزقبا","دارخزک","توکا","سینه‌سرخ","دم‌جنبانک","زاغی","غراب","هما","دال","عقاب طلایی","عقاب دریایی","شاهین بحری","شاهین لاچین","سنقر","سارگپه","ترمتای","بوتیمار","کشیم","چنگر","درنا","هوبره","زاغ بور","کوکر","یلوه","آبچلیک","خروس کولی","سلیم","نوک‌خنجری","پاشلک","آب‌دزدک","حواصیل خاکستری","اگرت","فاخته","توراکو","مرغ شاخدار","شاخدار","نوک‌شاخ","مرغ بهشتی","پرنده آفتاب","شاه‌طوطی","طوطی کاکلی","کبوتر تاج‌دار","مرغابی","اردک سرسبز","غاز وحشی","قو گنگ","مار","مار کبرا","مار افعی","مار زنگی","پایتون","بوآ","آناکوندا","مار مرجانی","مار جعفری","مار شاخدار","مار آبی","مار چلیپر","مار پلنگی","مار درختی","مارمولک","آگاما","ایگوانا","آفتاب‌پرست","گکو","بزمجه","اژدهای کومودو","اسکینک","سوسمار شاخدار","سوسمار دم‌خار","تواتارا","لاک‌پشت","لاک‌پشت دریایی","لاک‌پشت سبز","لاک‌پشت چرمی","لاک‌پشت منقار عقابی","لاک‌پشت برکه‌ای","لاک‌پشت خشکی","لاک‌پشت غول‌پیکر","لاک‌پشت نرم‌پوست","تمساح","کروکودیل","کایمن","گاویال","آلیگاتور","مارمولک شنی","مارمولک پرنده","مارمولک یقه‌دار","مارمولک مانیتور","سوسمار سبز","سوسمار ایرانی","مارمولک دیواری","مارمولک پلنگی","مارمولک شاخدار تگزاس","مارمولک دم‌تیغی","مارمولک شیشه‌ای","قورباغه","وزغ","سمندر","سمندر آبی","سمندر غول‌پیکر چینی","سمندر مکزیکی","اکسولوتل","قورباغه درختی","قورباغه شیشه‌ای","قورباغه سمی","قورباغه گاوی","قورباغه مردابی","قورباغه پلنگی","قورباغه پرنده","قورباغه بارانی","قورباغه چمن‌زار","وزغ سبز","وزغ بیلچه‌پا","وزغ نیشکر","وزغ شاخدار","سمندر آتشین","سمندر غاری","سمندر خالدار","سمندر ببری","سمندر قرمز","سمندر ژاپنی","سمندر پاگنده","سمندر بدون ریه","کرم‌دوزیست","سیسیلیان","ماهی قرمز","کپور","ماهی قزل‌آلا","سالمون","ساردین","کیلکا","تن","ماهی خال‌مخالی","ماهی آزاد","اردک‌ماهی","سوف","ماهی سفید","ماهی کفال","ماهی حلوا","هامور","سنگسر","شیرماهی","ماهی مرکب‌خوار","ماهی بادکنکی","اسب دریایی","مارماهی","مارماهی برقی","سفره‌ماهی","کوسه","کوسه سفید","کوسه ببری","کوسه سرچکشی","کوسه نهنگ","کوسه پرستار","کوسه ماکو","اره‌ماهی","شمشیرماهی","بادبان‌ماهی","ماهی پرنده","ماهی فرشته","ماهی پروانه‌ای","ماهی دلقک","ماهی جراح","ماهی شیر","ماهی عقرب","ماهی سنگی","ماهی بادکنکی ژاپنی","ماهی فوگ","ماهی گورامی","ماهی فایتر","ماهی گوپی","ماهی مولی","ماهی دم‌شمشیری","ماهی آنجل","دیسکس","ماهی اسکار","ماهی نئون","ماهی تترا","ماهی زبرا","ماهی رنگین‌کمانی","ماهی چاقو","گربه‌ماهی","ماهی برقی","ماهی مکنده","ماهی گل‌خورک","ماهی گل‌آلود","ماهی فانوس","ماهی مرکب‌نما","ماهی اژدها","ماهی خورشیدی","ماهی ماه","ماهی بادبادکی","ماهی خفاشی","ماهی کماندار","ماهی آب شیرین","ماهی خاویاری","فیل‌ماهی","اوزون‌برون","تاس‌ماهی","ماهی مرکب‌دندان","ماهی یخی","ماهی قلاب‌دار","ماهی جعبه‌ای","ماهی گاوی","ماهی بزماهی","پروانه","شب‌پره","زنبور","زنبور عسل","زنبور قرمز","زنبور وحشی","زنبور پارازیت","زنبور نجار","زنبور خاکی","مگس","مگس خانگی","مگس اسبی","پشه","پشه مالاریا","پشه آئدس","مورچه","مورچه قرمز","مورچه سیاه","موریانه","سوسک","سوسک حمام","سوسک شاخدار","سوسک کرگدنی","کفشدوزک","سن","زنجره","شته","ملخ","جیرجیرک","آخوندک","سنجاقک","آسیابک","کک","شپش","ساس","بید","کرم ابریشم","کرم شاخ‌دار","کرم برگ‌خوار","سوسک سرگین‌غلتان","سوسک ببری","سوسک بمب‌افکن","سوسک چوب‌خوار","سوسک آهو","سوسک طلایی","پروانه مونارک","پروانه دم‌چلچله‌ای","پروانه سفید","پروانه آبی","پروانه شیشه‌ای","پروانه جغدی","پروانه شب‌تاب","شب‌پره اطلس","شب‌پره ابریشم","سنک آبزی","سن قاتل","سن سپردار","سن گندم","زنجرک","مگس میوه","مگس تسه‌تسه","مگس سفید","سوسری","شپشک آردآلود","شپشک گیاهی","کک‌سان","گوش‌خیزک","ماهی نقره‌ای","حشره چوبی","حشره برگ‌نما","عنکبوت","رتیل","عقرب","عقرب زرد","کنه","هیره","عنکبوت گرگی","عنکبوت جهنده","عنکبوت بیوه سیاه","عنکبوت شکارچی","عنکبوت خرچنگی","عنکبوت تارگرد","عقرب شلاقی","عنکبوت دریایی","هزارپا","صدپا","هزارپای غول‌پیکر","صدپای خانگی","خرخاکی","خرخاکی غول‌پیکر","خرچنگ","لابستر","شاه‌میگو","میگو","میگوی آخوندکی","کریل","کک دریایی","بارناکل","خرچنگ نعل‌اسبی","خرچنگ عنکبوتی","حلزون","حلزون باغی","حلزون دریایی","حلزون مخروطی","لیسه","صدف","صدف مرواریدساز","صدف خوراکی","گوش‌ماهی","کشتی‌چسبان","اختاپوس","ماهی مرکب","سپیداج","ناتیلوس","آمونیت","عروس دریایی","شقایق دریایی","مرجان","هیدرا","اسفنج دریایی","ستاره دریایی","ستاره شکننده","توتیا","خیار دریایی","دلار شنی","کرم خاکی","زالو","کرم نواری","کرم قلابدار","کرم لوله‌ای","اسفنج شیشه‌ای","کرم ابریشم دریایی","پلاناریا","کرم گرد","کرم مویی","شانه‌دار","کرم پیکانی","کرم مخملی","لانسلت","آسیدیان"];
+const CORE={"حیوانات":["فیل","گربه","شتر","خرگوش","میمون","زرافه","شیر","ببر","پلنگ","گرگ","روباه","خرس","اسب","گاو","گوسفند"],"شغل":["پزشک","پرستار","معلم","مهندس","نجار","آشپز","خلبان","آتش‌نشان","راننده","کشاورز","فروشنده","برنامه‌نویس","وکیل","عکاس","خیاط"],"کتاب":["ماجراجویی","عاشقانه","تاریخی","علمی","تخیلی","جنایی","کودک","شعر","زندگی‌نامه","فلسفه","روان‌شناسی","طنز","آموزشی","فرهنگ‌نامه","سفرنامه"],"تاریخ":["هخامنشیان","ساسانیان","صفویه","قاجار","مشروطه","جاده ابریشم","تخت جمشید","کوروش","داریوش","شاهنامه","قلعه تاریخی","کاروانسرا","جنگ جهانی","باستان‌شناسی","کتیبه"],"انتزاعی":["عشق","ترس","شادی","غم","امید","اعتماد","آزادی","عدالت","شجاعت","صبوری","حسادت","خاطره","آرامش","هیجان","دوستی"],"شهر و کشور":["تهران","مشهد","سبزوار","تبریز","شیراز","اصفهان","رشت","اهواز","استانبول","پاریس","لندن","رم","توکیو","دبی","باکو"],"موسیقی":["گیتار","پیانو","ویولن","تنبک","دف","سه‌تار","تار","سنتور","نی","درام","ترانه","کنسرت","خواننده","آهنگ","ریتم"],"کودکان":["بادکنک","مداد رنگی","تاب","سرسره","اسباب‌بازی","عروسک","لگو","دوچرخه","قصه شب","نقاشی","کودکستان","توپ بازی","پازل","ماشین اسباب‌بازی","خمیر بازی"],"کارتون":["تام و جری","میکی‌ماوس","پینوکیو","شرک","باب اسفنجی","پلنگ صورتی","سیندرلا","علاءالدین","فروزن","داستان اسباب‌بازی","ماشین‌ها","مینیون‌ها","پاندای کونگ‌فوکار","شیرشاه","ماداگاسکار"],"سلبریتی":["مهران مدیری","رضا عطاران","شهاب حسینی","پرویز پرستویی","هدیه تهرانی","ترانه علیدوستی","محسن چاوشی","همایون شجریان","علیرضا قربانی","نوید محمدزاده","امین حیایی","رامبد جوان","احسان علیخانی","محمدرضا گلزار","بهرام رادان"],"فوتبال":["گل","پنالتی","آفساید","کرنر","دروازه‌بان","مهاجم","مدافع","هافبک","داور","کارت قرمز","کارت زرد","ضربه آزاد","دربی","جام قهرمانی","وقت اضافه"],"کلمات من":["خنده","دوستی","مهمانی","مدرسه","سفر","خانواده","باران","ماشین","خانه","تلفن","خواب","بازار","هدیه","عکس","بازی"],"اشیاء":["صندلی","میز","چتر","ساعت","کلید","تلفن","لیوان","قاشق","چراغ","کیف","کفش","آینه","مداد","کتری","قیچی"],"عمومی":["مدرسه","باران","ماشین","سفر","بازار","خانه","خیابان","پارک","دوست","خانواده","صبح","شب","کار","تعطیلات","خرید"],"فیلم و سریال":["اکشن","کمدی","درام","ترسناک","عاشقانه","جنایی","معمایی","علمی تخیلی","تاریخی","مستند","انیمیشن","کارآگاهی","ماجراجویی","خانوادگی","فانتزی"],"مشاهیر":["فردوسی","حافظ","سعدی","مولانا","خیام","ابن سینا","رازی","خوارزمی","پروین اعتصامی","نیما یوشیج","کمال‌الملک","شهریار","سهراب سپهری","مریم میرزاخانی","علامه دهخدا"],"اماكن و گردشگری":["موزه","کوه","آبشار","هتل","بازار سنتی","پارک","ساحل","جنگل","کویر","رودخانه","قلعه","مسجد تاریخی","باغ","روستا","پل تاریخی"],"ورزشی":["شنا","کشتی","بسکتبال","تنیس","دوچرخه‌سواری","والیبال","دویدن","کوهنوردی","بوکس","کاراته","تکواندو","بدنسازی","اسکی","تیراندازی","ژیمناستیک"],"تکنولوژی و علمی":["ربات","کامپیوتر","میکروسکوپ","موشک","هوش مصنوعی","اینترنت","گوشی هوشمند","ماهواره","تلسکوپ","برنامه‌نویسی","واقعیت مجازی","چاپگر سه‌بعدی","آزمایشگاه","انرژی خورشیدی","پهپاد"],"خوراکی":["کباب","پیتزا","بستنی","هندوانه","چای","قورمه‌سبزی","قیمه","آش","ساندویچ","برنج","نان","ماکارونی","سالاد","شیرینی","میوه"],"ضرب‌المثل":["از تو حرکت از خدا برکت","نابرده رنج گنج میسر نمی‌شود","جوجه را آخر پاییز می‌شمارند","کار امروز را به فردا میفکن","خواستن توانستن است","هر که بامش بیش برفش بیشتر","دیگ به دیگ می‌گوید روت سیاه","یک دست صدا ندارد","مارگزیده از ریسمان سیاه و سفید می‌ترسد","آب که از سر گذشت چه یک وجب چه صد وجب","جلوی ضرر را هر وقت بگیری منفعت است","سحرخیز باش تا کامروا باشی","تا تنور داغ است نان را بچسبان","آش نخورده و دهان سوخته","از کوزه همان برون تراود که در اوست","هر گردی گردو نیست","با یک گل بهار نمی‌شود","قطره قطره جمع گردد وانگهی دریا شود","سنگ بزرگ علامت نزدن است","دور از چشم دور از دل","جواب ابلهان خاموشی است","درخت هرچه پربارتر افتاده‌تر","خشت اول چون نهد معمار کج تا ثریا می‌رود دیوار کج","تو نیکی می‌کن و در دجله انداز","سالی که نکوست از بهارش پیداست","موش تو سوراخ نمی‌رفت جارو به دمش می‌بست","کوه به کوه نمی‌رسد آدم به آدم می‌رسد","هر سخن جایی و هر نکته مکانی دارد","تا نباشد چیزکی مردم نگویند چیزها","گر صبر کنی ز غوره حلوا سازی","عاقبت جوینده یابنده بود","هر چه کنی به خود کنی گر همه نیک و بد کنی","چاه مکن بهر کسی اول خودت دوم کسی","یک کلاغ چهل کلاغ","از آب گل‌آلود ماهی گرفتن","از این ستون به آن ستون فرج است","آب در کوزه و ما تشنه‌لبان می‌گردیم","آفتابه لگن هفت دست شام و ناهار هیچی","بار کج به منزل نمی‌رسد","باد آورده را باد می‌برد","با ماه نشینی ماه شوی با دیگ نشینی سیاه شوی","بزک نمیر بهار میاد کمبزه با خیار میاد","پای مرغت را ببند همسایه را دزد نکن","پنبه را از گوشت درآور","چراغی که به خانه رواست به مسجد حرام است","حساب حساب است کاکا برادر","خواهی نشوی رسوا همرنگ جماعت شو","دندان اسب پیشکشی را نمی‌شمارند","دو صد گفته چون نیم کردار نیست","دود از کنده بلند می‌شود","روغن ریخته را نذر امامزاده کردن","زبان سرخ سر سبز می‌دهد بر باد","سگ زرد برادر شغال است","شتر دیدی ندیدی","شنیدن کی بود مانند دیدن","کاسه داغ‌تر از آش","کبوتر با کبوتر باز با باز","گربه دستش به گوشت نمی‌رسد می‌گوید بو می‌دهد","مشت نمونه خروار است","نه سیخ بسوزد نه کباب"]};
+const TEMPLATES={"حیوانات":["{x}","بچه {x}","{x} وحشی","{x} اهلی","{x} بزرگ","{x} کوچک","{x} نر","{x} ماده","صدای {x}","غذای {x}","لانه {x}","ردپای {x}","تصویر {x}","{x} در جنگل","{x} در باغ‌وحش","{x} سریع","{x} خواب‌آلود","{x} گرسنه","{x} بازیگوش","{x} پیر"],"شغل":["{x}","{x} ماهر","{x} تازه‌کار","{x} باتجربه","{x} شیفت شب","{x} شیفت روز","ابزار {x}","محل کار {x}","لباس {x}","دستیار {x}","آموزش {x}","کار {x}","{x} حرفه‌ای","{x} جوان","{x} قدیمی","{x} معروف","{x} خسته","{x} پرکار","{x} دقیق","{x} خوش‌اخلاق"],"کتاب":["کتاب {x}","داستان {x}","رمان {x}","نویسنده {x}","جلد {x}","فصل {x}","صفحه {x}","قفسه {x}","نسخه {x}","ترجمه {x}","خلاصه {x}","نقد {x}","موضوع {x}","کتاب صوتی {x}","کتاب الکترونیکی {x}","کتاب قدیمی {x}","کتاب جدید {x}","کتاب معروف {x}","کتاب کوتاه {x}","کتاب پرفروش {x}"],"تاریخ":["{x}","دوره {x}","داستان {x}","سند {x}","یادگار {x}","نقشه {x}","موزه {x}","کتاب {x}","پژوهش {x}","ماجرای {x}","اثر {x}","زمان {x}","نام {x}","روایت {x}","تصویر {x}","نماد {x}","میراث {x}","آثار {x}","تاریخ {x}","یادبود {x}"],"انتزاعی":["{x}","احساس {x}","حس {x}","معنای {x}","نشانه {x}","شدت {x}","وجود {x}","نبود {x}","لحظه {x}","حالت {x}","رفتار از روی {x}","فکر درباره {x}","تجربه {x}","یاد {x}","رنگ {x}","نماد {x}","داستان {x}","آرزوی {x}","دلیل {x}","نتیجه {x}"],"شهر و کشور":["{x}","سفر به {x}","نقشه {x}","فرودگاه {x}","مرکز {x}","خیابان‌های {x}","بازار {x}","دانشگاه {x}","موزه {x}","هتل {x}","آب و هوای {x}","غذای محلی {x}","شب‌های {x}","صبح {x}","پارک {x}","تاکسی {x}","قطار {x}","عکس {x}","مردم {x}","سوغات {x}"],"موسیقی":["{x}","صدای {x}","نوازنده {x}","تمرین {x}","اجرای {x}","آهنگ با {x}","کلاس {x}","استاد {x}","کنسرت {x}","ریتم {x}","ملودی {x}","ضبط {x}","ساز {x}","قطعه {x}","اجرای زنده {x}","صدای آرام {x}","صدای بلند {x}","آهنگ شاد {x}","آهنگ غمگین {x}","موسیقی {x}"],"کودکان":["{x}","بازی با {x}","اتاق {x}","هدیه {x}","کودک و {x}","بازی گروهی {x}","بازی خانگی {x}","بازی بیرونی {x}","{x} رنگی","{x} بزرگ","{x} کوچک","{x} جدید","{x} قدیمی","خرید {x}","جعبه {x}","مسابقه {x}","آموزش با {x}","دوست و {x}","جشن و {x}","خنده با {x}"],"کارتون":["{x}","کارتون {x}","شخصیت {x}","داستان {x}","قسمت {x}","فیلم {x}","عکس {x}","دوست {x}","دشمن {x}","ماجرای {x}","خانه {x}","صدای {x}","لباس {x}","بازی {x}","اسباب‌بازی {x}","پوستر {x}","خنده {x}","سفر {x}","گروه {x}","قهرمان {x}"],"سلبریتی":["{x}","مصاحبه با {x}","عکس {x}","طرفداران {x}","زندگی‌نامه {x}","برنامه با {x}","جایزه {x}","شهرت {x}","خبر {x}","صفحه رسمی {x}","اجرای {x}","اثر {x}","مراسم {x}","فرش قرمز {x}","هواداران {x}","مهمان {x}","گفتگو با {x}","زندگی {x}","کارنامه {x}","پشت صحنه {x}"],"فوتبال":["{x}","صحنه {x}","قانون {x}","تمرین {x}","مسابقه {x}","تصمیم {x}","لحظه {x}","حاشیه {x}","ویدئوی {x}","اعتراض به {x}","تمرین برای {x}","بازی با {x}","فوتبال و {x}","گزارش {x}","تکرار {x}","قانون جدید {x}","اشتباه {x}","حرفه‌ای {x}","صحنه حساس {x}","لحظه آخر {x}"],"کلمات من":["{x}","{x} خوب","{x} بد","{x} بزرگ","{x} کوچک","{x} قدیمی","{x} جدید","{x} نزدیک","{x} دور","{x} سریع","{x} آرام","داستان {x}","عکس {x}","خاطره {x}","روز {x}","شب {x}","صبح {x}","دوست {x}","بازی {x}","لحظه {x}"],"اشیاء":["{x}","{x} بزرگ","{x} کوچک","{x} قدیمی","{x} جدید","{x} فلزی","{x} چوبی","{x} پلاستیکی","{x} سنگین","{x} سبک","{x} شکسته","{x} تمیز","{x} کثیف","خرید {x}","فروش {x}","جعبه {x}","عکس {x}","کنار {x}","روی {x}","زیر {x}"],"عمومی":["{x}","{x} خوب","{x} بد","{x} بزرگ","{x} کوچک","{x} قدیمی","{x} جدید","{x} شلوغ","{x} خلوت","{x} نزدیک","{x} دور","داستان {x}","عکس {x}","خاطره {x}","صبح {x}","شب {x}","روز {x}","دوست {x}","بازی {x}","لحظه {x}"],"فیلم و سریال":["فیلم {x}","سریال {x}","صحنه {x}","داستان {x}","بازیگر {x}","کارگردان {x}","قسمت {x}","پایان {x}","شروع {x}","پوستر {x}","موسیقی {x}","جایزه {x}","نقد {x}","سینمای {x}","اثر {x}","فیلم جدید {x}","سریال جدید {x}","فیلم قدیمی {x}","سریال معروف {x}","تماشای {x}"],"مشاهیر":["{x}","زندگی {x}","آثار {x}","کتاب {x}","عکس {x}","خانه {x}","موزه {x}","زندگی‌نامه {x}","یادبود {x}","نام {x}","داستان {x}","سخن {x}","اثر معروف {x}","دوران {x}","پژوهش درباره {x}","مجسمه {x}","سال‌های زندگی {x}","یادگاری {x}","افتخار {x}","میراث {x}"],"اماكن و گردشگری":["{x}","{x} معروف","{x} قدیمی","{x} جدید","{x} تاریخی","{x} زیبا","{x} شلوغ","{x} خلوت","{x} نزدیک","{x} دور","سفر به {x}","عکس {x}","بازدید از {x}","ورودی {x}","مسیر {x}","کنار {x}","شب {x}","صبح {x}","راهنمای {x}","نقشه {x}"],"ورزشی":["{x}","مسابقه {x}","تمرین {x}","قهرمان {x}","مربی {x}","باشگاه {x}","لباس {x}","وسایل {x}","قانون {x}","مسابقه حرفه‌ای {x}","تمرین سخت {x}","تمرین سبک {x}","تیم {x}","مدال {x}","قهرمانی {x}","آموزش {x}","حرکت {x}","رکورد {x}","ورزشکار {x}","بازی {x}"],"تکنولوژی و علمی":["{x}","دستگاه {x}","آزمایش {x}","پروژه {x}","آموزش {x}","کاربرد {x}","مدل {x}","نسخه جدید {x}","نسخه قدیمی {x}","آینده {x}","پژوهش {x}","خبر {x}","اختراع {x}","آزمایشگاه {x}","دانش {x}","فناوری {x}","سیستم {x}","برنامه {x}","تصویر {x}","ساخت {x}"],"خوراکی":["{x}","{x} داغ","{x} سرد","{x} شیرین","{x} شور","{x} تند","{x} خانگی","{x} رستورانی","{x} تازه","{x} خوشمزه","بشقاب {x}","خرید {x}","پخت {x}","دستور {x}","بوی {x}","طعم {x}","مهمانی با {x}","سفره {x}","ناهار {x}","شام {x}"],"ضرب‌المثل":["{x}","{x}","{x}","{x}","{x}"]};
+const SABZE_VARI_WORDS=[{"dialect":"تِن بِلی","std":"سینی بزرگ"},{"dialect":"تِن بو","std":"شلوار؛ بیشتر برای بیژامه"},{"dialect":"تُنُک","std":"پهن کردن"},{"dialect":"تُنگلی","std":"تنگ کوچک"},{"dialect":"تونوکه","std":"شُرت"},{"dialect":"توی","std":"خامه روی شیر؛ سرشیر"},{"dialect":"تیارت","std":"تئاتر"},{"dialect":"تیت","std":"توت"},{"dialect":"تی خیل تی خیل","std":"نرم یا ریش‌ریش شده"},{"dialect":"تیف","std":"آب دهان"},{"dialect":"جال","std":"شن درشت"},{"dialect":"جاگا","std":"ظرف"},{"dialect":"جِرق اِفتو","std":"سوزانندگی آفتاب"},{"dialect":"جرو","std":"جارو"},{"dialect":"جغنه","std":"نوعی پرنده"},{"dialect":"جوز","std":"گردو"},{"dialect":"جوق جوق","std":"حباب‌های روی ماست بسیار ترش"},{"dialect":"جول","std":"پالان"},{"dialect":"جیتیلی","std":"خیلی کوچک؛ کوتاه‌قد یا ریز و زرنگ"},{"dialect":"جیزغَلَه","std":"ته‌مانده روغن‌گیری از کره؛ جزغاله"},{"dialect":"جیشت","std":"زشت"},{"dialect":"جیلی","std":"کوچک"},{"dialect":"جینگل","std":"جنگل"},{"dialect":"مار","std":"مادر"},{"dialect":"ماری","std":"لوله آب"},{"dialect":"مِجری","std":"صندوق کوچک"},{"dialect":"مَچَل","std":"نادان"},{"dialect":"مِجمَعَه","std":"سینی بزرگ"},{"dialect":"مُخ مُخا","std":"وسوسه"},{"dialect":"مُدبَخ","std":"آشپزخانه"},{"dialect":"مَعجَر","std":"نرده"},{"dialect":"مِضِغ وَرَه","std":"خزه"},{"dialect":"مِقبیل","std":"مورد قبول"},{"dialect":"مواجِب","std":"حقوق"},{"dialect":"مُوتیلی","std":"کوتاه؛ کوچک"},{"dialect":"موسیچه","std":"پرنده یا کریم؛ موسی‌تقی"},{"dialect":"مُوجی","std":"عدس"},{"dialect":"نابید","std":"نابود"},{"dialect":"نَرا","std":"نرو"},{"dialect":"نِشوی","std":"کثیف"},{"dialect":"نَعلین","std":"کفش"},{"dialect":"نِلیچَه","std":"تشک؛ گاهی نِهِلی"},{"dialect":"نَمُوخُوم","std":"نمی‌خواهم"},{"dialect":"نَم مام","std":"نمی‌خواهم"},{"dialect":"نُوهورما","std":"باد گرم"},{"dialect":"نیم تَنَه","std":"کت"},{"dialect":"واجای","std":"جستجو کن"},{"dialect":"وادِرریَه","std":"پاره شده"},{"dialect":"واجِرقیَه","std":"چاق شده"},{"dialect":"واجگرد","std":"عود کردن؛ معمولاً بیماری"},{"dialect":"والسلام، نعمت تمام","std":"ختم کلام یا اتمام حجت همراه دلخوری"},{"dialect":"والیشتم","std":"لیسیدم"},{"dialect":"وجِر وِقِر","std":"اخم و تخم"},{"dialect":"وِر قُرار","std":"برقرار"},{"dialect":"هَپَکَه","std":"مات‌زده"},{"dialect":"هَندینَه","std":"ناسزا برای فرد منفور یا زشت‌چهره"},{"dialect":"همسیه","std":"همسایه"},{"dialect":"هِم زلف","std":"باجناق"},{"dialect":"هُونَس","std":"آنجاست"},{"dialect":"هی لُمبَه","std":"اصطلاح بازی الاکلنگ"},{"dialect":"یَک اَنجو","std":"مقدار کم"},{"dialect":"یَک هِله پیک","std":"مقدار کم؛ چیز کم‌ارزش"},{"dialect":"یوک","std":"حرف تعجب؛ برابر «وا»"},{"dialect":"عَلِس","std":"خوبه؛ برای تأیید درست بودن"},{"dialect":"عَل لِتو","std":"فردی که زیاد یا طولانی بیمار می‌شود"},{"dialect":"غچ","std":"آغشته؛ لبریز"},{"dialect":"غوطَه","std":"آب‌تنی"},{"dialect":"غِلِفت","std":"دیگ بزرگ"},{"dialect":"غول تِشنگ","std":"فرد بسیار هیکلی"},{"dialect":"فاش","std":"فحش؛ دشنام"},{"dialect":"فیتک","std":"سوت"},{"dialect":"فیته","std":"نوعی حوله"},{"dialect":"قاشق کَش","std":"تند خوردن غذا"},{"dialect":"قاق","std":"پذیرفتن اشتباه و پایان دادن به بحث"},{"dialect":"قبرغَه","std":"دنده"},{"dialect":"قَچَه","std":"میان لنگ و دو پا"},{"dialect":"قَرِودَبِّه","std":"اوراق یا مچاله شده"},{"dialect":"قَرنِه قِزی","std":"کج‌ومعوج؛ ناموزون؛ بدریخت"},{"dialect":"قِرقَشه","std":"سروصدا؛ آشوب"},{"dialect":"قُندره","std":"پشم حلاجی‌شده"},{"dialect":"قِوَرَه","std":"تیپ"},{"dialect":"قیچ","std":"نوعی هیزم"},{"dialect":"کاتا","std":"کوتاه"},{"dialect":"کاتَک","std":"کتک"},{"dialect":"کال","std":"نارس"},{"dialect":"کال کال","std":"ناهموار"},{"dialect":"کالَه","std":"کوتاه"},{"dialect":"کُتل","std":"پشته؛ تل؛ تپه بلند"},{"dialect":"کغز","std":"ریشه بزرگ برخی گیاهان"},{"dialect":"کِلَر","std":"بی‌حس"},{"dialect":"کِلَف","std":"دهان"},{"dialect":"کِلپسه","std":"چلپاسه؛ مارمولک"},{"dialect":"کُنار او","std":"توالت"},{"dialect":"کوچی","std":"توله‌سگ"},{"dialect":"کوکوم، کوکوم","std":"کبود و زخم‌خورده؛ سیاه‌شده"},{"dialect":"کِلُو","std":"گیج"},{"dialect":"کینه مُشتی","std":"باج و حق‌حساب"},{"dialect":"کیله","std":"کوزه سفالی یا پیمانه غله و آرد"},{"dialect":"گاشه","std":"گوشه؛ زاویه"},{"dialect":"گِچُّوْ","std":"گیج و منگ؛ نادان"},{"dialect":"گُردَو","std":"دویدن با سرعت"},{"dialect":"گِر رو","std":"کچل؛ بی‌مو"},{"dialect":"گُرُّ گُرْ","std":"پی‌درپی؛ فراوان"},{"dialect":"گِرگی","std":"خلافکار؛ شرور"},{"dialect":"گُرْ ماست","std":"ماست بسیار ترش"},{"dialect":"گُر میشت","std":"مشت محکم زدن"},{"dialect":"گِرنِخ","std":"لاغراندام"},{"dialect":"گُروخت","std":"گریخت؛ فرار کرد"},{"dialect":"گِلاندَن","std":"غلتاندن"},{"dialect":"گُلارَه","std":"گلوله نخ یا کاموا"},{"dialect":"گِلِه گَو","std":"گودال کوچک"},{"dialect":"گِلِونگ","std":"سردرگمی"},{"dialect":"گِمبو","std":"چاق"},{"dialect":"گِمبوک","std":"شکم‌گنده"},{"dialect":"گِندُونای","std":"تره"},{"dialect":"گَو","std":"گودال"},{"dialect":"گوسنَه","std":"گرسنه"},{"dialect":"گوتو","std":"عنکبوت"},{"dialect":"گُوَلَه","std":"جوال؛ یا لباس از شکل افتاده"},{"dialect":"گیله","std":"دانه انگور؛ همچنین موی بافته"},{"dialect":"لَتَه","std":"پارچه"},{"dialect":"لِر","std":"آب دهان"},{"dialect":"لِم پا","std":"نوعی چراغ نفتی"},{"dialect":"لُمبَه","std":"کلفت؛ ضخیم"},{"dialect":"لَنج و دبَه","std":"چانه زدن"},{"dialect":"لوک","std":"شانه؛ عضو بدن"},{"dialect":"لُو لُو","std":"سروصدا"},{"dialect":"لِفچ","std":"لب و لوچه"},{"dialect":"لیش","std":"خیس"}];
+const topics=[...Object.keys(CORE),'گویش سبزواری'];
+let selected=new Set(['عمومی']);
+let game={
+  teamCount:4, time:60, rounds:3,
+  teams:[], scores:[], active:0, round:1, turnsDone:0,
+  turnGain:0, left:60, timer:null, deadline:0, turnRunning:false,
+  pool:[], bag:[], lastKey:''
+};
+
+function go(id){
+  document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function bindSingle(group,fn){
+  document.querySelectorAll('#'+group+' .chip').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('#'+group+' .chip').forEach(x=>x.classList.remove('sel'));
+    b.classList.add('sel'); fn(+b.dataset.v);
+  });
+}
+bindSingle('times',v=>game.time=v);
+bindSingle('rounds',v=>game.rounds=v);
+function setTeamCount(v){
+  v=Math.max(2,Math.min(10,parseInt(v,10)||2));
+  saveTeamInputs();
+  game.teamCount=v;
+  const sel=document.getElementById('teamCountSelect'); if(sel)sel.value=String(v);
+  document.querySelectorAll('#teamCounts .chip').forEach(x=>x.classList.toggle('sel',+x.dataset.v===v));
+  renderTeamInputs();
+}
+bindSingle('teamCounts',v=>setTeamCount(v));
+const teamCountSelect=document.getElementById('teamCountSelect');
+if(teamCountSelect)teamCountSelect.onchange=()=>setTeamCount(teamCountSelect.value);
+
+function renderTeamInputs(){
+  const box=document.getElementById('teamInputs'); box.innerHTML='';
+  for(let i=0;i<game.teamCount;i++){
+    const d=document.createElement('div'); d.className='teamField';
+    const old=(game.teams[i]&&game.teams[i].name)||('تیم '+faNum(i+1));
+    d.innerHTML='<label>نام تیم '+faNum(i+1)+'</label><input id="team_'+i+'" value="'+escapeHtml(old)+'">';
+    box.appendChild(d);
+  }
+}
+function saveTeamInputs(){
+  const names=[];
+  for(let i=0;i<game.teamCount;i++){
+    const el=document.getElementById('team_'+i);
+    names.push({name:(el?el.value.trim():'')||('تیم '+faNum(i+1))});
+  }
+  game.teams=names;
+}
+function faNum(n){return String(n).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d])}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+function cardsFor(topic){
+  if(topic==='حیوانات') return ANIMALS_500.map(x=>({t:topic,std:x}));
+  if(topic==='گویش سبزواری') return SABZE_VARI_WORDS.map(x=>({t:topic,std:x.std,dialect:x.dialect}));
+  const a=[]; for(const x of CORE[topic]) for(const p of TEMPLATES[topic]) a.push({t:topic,std:p.replace('{x}',x)});
+  return a;
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+function openTopics(){saveTeamInputs(); renderTopics(); go('topics')}
+function renderTopics(){
+  const g=document.getElementById('topicGrid');g.innerHTML='';
+  topics.forEach(t=>{
+    const b=document.createElement('button'); b.className='topic'+(selected.has(t)?' sel':'');
+    b.innerHTML=t+'<small>'+faNum(cardsFor(t).length)+' کارت</small>';
+    b.onclick=()=>{selected.has(t)?selected.delete(t):selected.add(t);if(!selected.size)selected.add(t);renderTopics()};
+    g.appendChild(b);
+  });
+}
+function startMatch(){
+  saveTeamInputs();
+  game.scores=Array(game.teamCount).fill(0);
+  game.active=0;game.round=1;game.turnsDone=0;game.turnGain=0;game.turnRunning=false;
+  game.pool=[];selected.forEach(t=>game.pool.push(...cardsFor(t)));game.bag=[];game.lastKey='';
+  showReady();
+}
+function showReady(){
+  clearTimer();
+  document.getElementById('readyTeam').textContent=game.teams[game.active].name;
+  document.getElementById('readyRound').textContent='دور '+faNum(game.round)+' از '+faNum(game.rounds);
+  renderScoreStrip('readyScores');
+  go('ready');
+}
+function startTurn(){
+  game.turnGain=0;game.left=game.time;game.deadline=Date.now()+game.time*1000;game.turnRunning=true;
+  document.getElementById('turn').textContent=game.teams[game.active].name+' • دور '+faNum(game.round);
+  updateTurnGain();tickView();nextWord();renderScoreStrip('gameScores');go('game');
+  game.timer=setInterval(updateClock,200);
+}
+function updateClock(){
+  if(!game.turnRunning)return;
+  const remain=Math.max(0,Math.ceil((game.deadline-Date.now())/1000));
+  if(remain!==game.left){game.left=remain;tickView()}
+  if(remain<=0)endTurn('time');
+}
+function tickView(){
+  document.getElementById('timer').textContent=faNum(game.left);
+  const p=Math.max(0,Math.min(100,game.left/game.time*100));
+  document.getElementById('timerRing').style.setProperty('--p',p);
+}
+function refillBag(){game.bag=shuffle(game.pool.slice())}
+function nextWord(){
+  if(!game.turnRunning||!game.pool.length)return;
+  if(!game.bag.length)refillBag();
+  let x=game.bag.pop();
+  if(game.bag.length&&x.t+'|'+x.std===game.lastKey){game.bag.unshift(x);x=game.bag.pop()}
+  game.lastKey=x.t+'|'+x.std;
+  const isSab=x.t==='گویش سبزواری';
+  document.getElementById('sabPair').style.display=isSab?'grid':'none';
+  document.getElementById('singleWordBox').style.display=isSab?'none':'flex';
+  if(isSab){
+    document.getElementById('dialectWord').textContent=x.dialect||x.std;
+    document.getElementById('stdWord').textContent=x.std;
+  }else{
+    document.getElementById('singleWord').textContent=x.std;
+  }
+  document.getElementById('cat').textContent=x.t+' • کارت '+faNum(game.turnGain+1);
+}
+function correctWord(){
+  if(!game.turnRunning)return;
+  game.scores[game.active]++;game.turnGain++;
+  updateTurnGain();renderScoreStrip('gameScores');nextWord();
+}
+function skipWord(){if(game.turnRunning)nextWord()}
+function updateTurnGain(){document.getElementById('turnGain').textContent='امتیاز این نوبت: '+faNum(game.turnGain)}
+function manualEnd(){if(game.turnRunning)endTurn('manual')}
+function clearTimer(){if(game.timer){clearInterval(game.timer);game.timer=null}}
+function endTurn(reason){
+  if(!game.turnRunning)return;
+  game.turnRunning=false;clearTimer();game.left=0;tickView();
+  const ended=game.active, endedName=game.teams[ended].name, gain=game.turnGain, total=game.scores[ended];
+  game.turnsDone++;
+  document.getElementById('endedTeam').textContent=endedName;
+  document.getElementById('endedGain').textContent=(reason==='time'?'زمان تمام شد • ':'پایان دستی • ')+'+'+faNum(gain)+' امتیاز';
+  document.getElementById('endedTotal').textContent='امتیاز کل '+endedName+': '+faNum(total);
+  renderScoreStrip('endScores');
+  const allDone=game.turnsDone>=game.teamCount*game.rounds;
+  document.getElementById('nextTurnBtn').textContent=allDone?'دیدن نتیجه نهایی':'آماده‌سازی تیم بعدی';
+  go('turnEnd');
+}
+function nextAfterSummary(){
+  if(game.turnsDone>=game.teamCount*game.rounds){finish();return}
+  game.active++;
+  if(game.active>=game.teamCount){game.active=0;game.round++}
+  showReady();
+}
+function renderScoreStrip(id){
+  const box=document.getElementById(id); if(!box)return; box.innerHTML='';
+  game.teams.forEach((t,i)=>{
+    const d=document.createElement('div');d.className='teamScore'+(i===game.active?' active':'');
+    d.innerHTML=escapeHtml(t.name)+'<b>'+faNum(game.scores[i]||0)+'</b>';box.appendChild(d);
+  });
+}
+function finish(){
+  clearTimer();game.turnRunning=false;
+  const order=game.teams.map((t,i)=>({name:t.name,score:game.scores[i]})).sort((a,b)=>b.score-a.score);
+  const top=order[0].score; const winners=order.filter(x=>x.score===top);
+  document.getElementById('winner').textContent=winners.length===1?winners[0].name+' برنده شد!':'مسابقه مساوی شد!';
+  const box=document.getElementById('finalStandings');box.innerHTML='';
+  order.forEach((x,i)=>{
+    const r=document.createElement('div');r.className='rankRow';
+    r.innerHTML='<div class="r">'+faNum(i+1)+'</div><div class="n">'+escapeHtml(x.name)+'</div><div class="s">'+faNum(x.score)+'</div>';
+    box.appendChild(r);
+  });
+  go('result');
+}
+function askExit(){document.getElementById('exitModal').classList.add('show')}
+function hideExit(){document.getElementById('exitModal').classList.remove('show')}
+function confirmExit(){hideExit();clearTimer();game.turnRunning=false;go('setup')}
+function restart(){clearTimer();game.turnRunning=false;game.scores=[];go('home')}
+
+window.addEventListener('load',()=>{
+  renderTeamInputs();renderTopics();
+  for(const t of topics){const expected=t==='حیوانات'?500:(t==='گویش سبزواری'?null:300);if(expected!==null&&cardsFor(t).length!==expected)throw new Error(t+' count '+cardsFor(t).length)}
+});
+</script>
+</body></html>
