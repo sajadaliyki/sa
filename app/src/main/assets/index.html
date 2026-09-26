@@ -634,20 +634,24 @@ function yookAudio(){
     return audioCtx;
   }catch(e){return null}
 }
-function yookTone(freq=440,duration=.16,type='sine',volume=.035){
+function yookTone(freq=440,duration=.22,type='sine',volume=.022){
   if(!musicEnabled)return;
   const c=yookAudio(); if(!c)return;
   const o=c.createOscillator(),g=c.createGain();
-  o.type=type;o.frequency.value=freq;g.gain.value=volume;
-  o.connect(g);g.connect(c.destination);o.start();
-  g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+duration);
-  o.stop(c.currentTime+duration+.02);
+  const now=c.currentTime;
+  o.type=(type==='square'||type==='sawtooth')?'sine':type;
+  o.frequency.setValueAtTime(freq,now);
+  g.gain.setValueAtTime(.0001,now);
+  g.gain.exponentialRampToValueAtTime(Math.max(.001,volume),now+.035);
+  g.gain.exponentialRampToValueAtTime(.0001,now+duration);
+  o.connect(g);g.connect(c.destination);o.start(now);
+  o.stop(now+duration+.04);
 }
 function startAmbient(){
   if(!musicEnabled||ambientOsc)return;
   const c=yookAudio(); if(!c)return;
   ambientOsc=c.createOscillator();ambientGain=c.createGain();
-  ambientOsc.type='sine';ambientOsc.frequency.value=174;ambientGain.gain.value=.008;
+  ambientOsc.type='sine';ambientOsc.frequency.value=196;ambientGain.gain.value=.0055;
   ambientOsc.connect(ambientGain);ambientGain.connect(c.destination);ambientOsc.start();
 }
 function stopAmbient(){
@@ -656,7 +660,7 @@ function stopAmbient(){
 function startWarDrone(){
   if(!musicEnabled||warOsc)return;
   stopAmbient();const c=yookAudio();if(!c)return;
-  warOsc=c.createOscillator();warGain=c.createGain();warOsc.type='sawtooth';warOsc.frequency.value=82;warGain.gain.value=.018;
+  warOsc=c.createOscillator();warGain=c.createGain();warOsc.type='sine';warOsc.frequency.value=98;warGain.gain.value=.0065;
   warOsc.connect(warGain);warGain.connect(c.destination);warOsc.start();
 }
 function stopWarDrone(){if(warOsc){try{warOsc.stop()}catch(e){};warOsc=null;warGain=null;}}
@@ -1244,7 +1248,15 @@ function nextWord(){
 }
 
 
-function playResultSound(win){ yookTone(win?720:180,.32,win?'sine':'sawtooth',.05); }
+function playResultSound(win){
+  if(win){
+    yookTone(523.25,.24,'sine',.022);
+    setTimeout(()=>yookTone(659.25,.30,'triangle',.018),130);
+  }else{
+    yookTone(329.63,.24,'sine',.018);
+    setTimeout(()=>yookTone(261.63,.30,'sine',.014),140);
+  }
+}
 function stopResultSound(){}
 function showPantomimeFeedback(win,reason){
   if(game.answerLocked)return;
@@ -1322,9 +1334,14 @@ function warAliveCount(){
 function startWarMusic(){ startWarDrone(); }
 function stopWarMusic(resumeMain=true){ stopWarDrone(); if(resumeMain&&musicEnabled)startAmbient(); }
 function playWarCue(kind){
-  if(kind==='victory'){yookTone(880,.22,'triangle',.055);setTimeout(()=>yookTone(1175,.32,'triangle',.045),180);}
-  else if(kind==='survive'){yookTone(520,.18,'square',.04);}
-  else{yookTone(145,.32,'sawtooth',.05);}
+  if(kind==='victory'){
+    yookTone(523.25,.24,'sine',.020);
+    setTimeout(()=>yookTone(659.25,.30,'triangle',.018),140);
+  }else if(kind==='survive'){
+    yookTone(440,.22,'sine',.016);
+  }else{
+    yookTone(246.94,.30,'sine',.014);
+  }
 }
 function nextAliveWarIndex(from){
   const n=game.teamCount;
@@ -1427,11 +1444,20 @@ function finishWar(winnerIndex){
 
 
 function startThreeTick(){
-  stopThreeTick(); if(!musicEnabled)return; yookTone(920,.05,'square',.025);
-  threeTickTimer=setInterval(()=>yookTone(920,.05,'square',.025),1000);
+  stopThreeTick(); if(!musicEnabled)return; yookTone(587.33,.08,'sine',.012);
+  threeTickTimer=setInterval(()=>yookTone(587.33,.08,'sine',.012),1000);
 }
 function stopThreeTick(){ if(threeTickTimer){clearInterval(threeTickTimer);threeTickTimer=null;} }
-function playThreeResult(win){ stopThreeTick(); yookTone(win?760:170,.3,win?'triangle':'sawtooth',.05); }
+function playThreeResult(win){
+  stopThreeTick();
+  if(win){
+    yookTone(523.25,.22,'sine',.020);
+    setTimeout(()=>yookTone(659.25,.28,'triangle',.016),120);
+  }else{
+    yookTone(293.66,.24,'sine',.016);
+    setTimeout(()=>yookTone(246.94,.28,'sine',.012),130);
+  }
+}
 function stopThreeResult(){}
 function showThreeFeedback(win,reason){
   if(game.answerLocked)return;
