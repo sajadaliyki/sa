@@ -24,10 +24,16 @@ jobs:
       - name: Prepare Android SDK 35
         shell: bash
         run: |
+          set -e
           echo "ANDROID_HOME=$ANDROID_HOME"
-          which sdkmanager
-          yes | sdkmanager --licenses > /dev/null || true
-          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKMANAGER" ]; then
+            SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | head -n 1)"
+          fi
+          echo "Using sdkmanager: $SDKMANAGER"
+          test -x "$SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses > /dev/null || true
+          "$SDKMANAGER" "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
       - name: Setup Gradle 8.9
         uses: gradle/actions/setup-gradle@v4
@@ -35,10 +41,12 @@ jobs:
           gradle-version: '8.9'
 
       - name: Show Build Environment
+        shell: bash
         run: |
           java -version
           gradle --version
-          sdkmanager --list_installed | grep -E "platforms;android-35|build-tools;35.0.0" || true
+          test -d "$ANDROID_HOME/platforms/android-35"
+          test -d "$ANDROID_HOME/build-tools/35.0.0"
           test -f app/build.gradle.kts
           test -f app/src/main/AndroidManifest.xml
 
