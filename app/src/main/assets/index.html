@@ -1116,7 +1116,7 @@ function renderTopics(){
     b.type='button';
     b.className='topic'+(selected.has(t)?' sel':'');
     b.disabled=count===0;
-    b.innerHTML=escapeHtml(t)+'<small>'+faNum(count)+' کارت</small>';
+    b.innerHTML=escapeHtml(t)+'<small>۵۰۰ کلمه</small>';
     b.onclick=()=>{
       if(count===0)return;
       selected.clear();
